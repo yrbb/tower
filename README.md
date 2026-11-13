@@ -22,7 +22,15 @@
 - 3 个手动存档和换层自动存档，支持覆盖安装保留进度。
 - 新版像素角色、怪物、道具与地图材质，适配安全区域、横屏和大字体。
 
-当前版本：**1.1.3**。更新记录见 [CHANGELOG.md](CHANGELOG.md)。
+发布版本：**[1.0](https://github.com/yrbb/tower/releases/tag/v1.0)**，直接提供现有 APK（应用内部版本 1.1.3）。[下载 APK](https://github.com/yrbb/tower/releases/download/v1.0/mota-1.1.3.apk) · [更新记录](CHANGELOG.md)
+
+## 游戏截图
+
+| 首页 | 游戏界面 | 背包 |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/mota-title.png" width="240" alt="魔塔首页"> | <img src="docs/screenshots/mota-game.png" width="240" alt="游戏界面：左侧背包与撤销，右侧方向键"> | <img src="docs/screenshots/mota-bag.png" width="240" alt="背包与道具"> |
+
+以上为 Android 真机截图；背包使用测试道具展示界面，不代表新游戏初始物品。
 
 ## 运行与构建
 
