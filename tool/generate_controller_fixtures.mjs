@@ -1,0 +1,25 @@
+import fs from 'node:fs';
+import {fileURLToPath} from 'node:url';
+const root=fileURLToPath(new URL('../',import.meta.url));
+const storage=new Map();
+globalThis.window={localStorage:{getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)}};
+globalThis.setTimeout=()=>0;
+Date.now=()=>1700000000000;
+const uri=s=>'data:text/javascript;base64,'+Buffer.from(s).toString('base64');
+const audio=uri(`export const sfx=new Proxy({},{get:()=>()=>{}});${['setVolume','setMuted','startBgm','startTitleBgm','stopBgm','unlockAudio'].map(n=>`export function ${n}(){}`).join('')}`);
+const base=new URL('../reference/src/stores/star.js',import.meta.url);
+let src=fs.readFileSync(base,'utf8').replace(/from '([^']+)'/g,(_,p)=>`from '${p==='vue'?uri('export const reactive=x=>x'):p.endsWith('/audio.js')?audio:new URL(p,base).href}'`);
+const {store,actions}=await import(uri(src));
+const clone=x=>JSON.parse(JSON.stringify(x,(_,v)=>typeof v==='function'?'help':v));
+const snapshots=[];
+function call(name,...args){actions[name](...args);snapshots.push({name,args,expected:clone(store)});}
+call('newGame');call('closeModal');call('closeModal');
+for(let i=0;i<72;i++)call('move',['left','up','right','down'][Math.floor(i/3)%4]);
+call('saveSlot','0');call('setVolume',.35);call('setMuted',true);call('setMuted',false);
+call('openModal',{type:'pause'});call('undo');call('openModal',{type:'saves',mode:'load'});call('loadSlot','0');
+call('useItem','bomb');call('useItem','not-an-item');call('buyAltar','hp');call('merchantBuy','m6a');
+call('openModal',{type:'items'});call('move','right');call('useItem','compass',1);call('closeModal');
+call('undo');call('saveSlot','1');call('deleteSlot','1');call('backToTitle');call('continueAuto');
+call('backToTitle');call('newGame');call('closeModal');call('loadSlot','2');call('deleteSlot','0');
+fs.writeFileSync(root+'test/fixtures/controller.json',JSON.stringify(snapshots));
+console.log(`Captured ${snapshots.length} controller actions, including full state, UI feedback and save slots.`);
